@@ -1,6 +1,6 @@
 // Cloud Gold service worker: caches app files so it opens fast and works offline once loaded.
 // Bump CACHE when you upload a new index.html so phones pick up the update.
-var CACHE='cloud-gold-v1';
+var CACHE='cloud-gold-v2';
 var FILES=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',function(e){e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(FILES)}).then(function(){return self.skipWaiting()}))});
 self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(k){return Promise.all(k.filter(function(x){return x!==CACHE}).map(function(x){return caches.delete(x)}))}).then(function(){return self.clients.claim()}))});
