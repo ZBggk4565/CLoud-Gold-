@@ -39,20 +39,20 @@ if(d.access_token){keep(d);boot()}else login('البريد أو كلمة الم�
 function out(){
 var b=document.createElement('button');b.textContent='خروج ☁';
 b.style.cssText='position:fixed;top:6px;left:6px;z-index:60;font-size:11px;padding:3px 8px;border:1px solid #e6dcc3;border-radius:10px;background:#fff;color:#7a6f5a;opacity:.8';
-b.onclick=function(){if(!confirm('تسجيل الخروج؟'))return;push().then(function(){localStorage.removeItem(SK);localStorage.removeItem(LS);sessionStorage.removeItem(FL);location.reload()})};
+b.onclick=function(){if(!confirm('تسجيل الخروج؟'))return;push().then(function(){localStorage.removeItem(SK);localStorage.removeItem(LS);localStorage.removeItem('cg_role');sessionStorage.removeItem('cg_as');sessionStorage.removeItem(FL);location.reload()})};
 document.body.appendChild(b)
 }
 function boot(){
 box('<p>جاري المزامنة...</p>');
 api('profiles?select=company_id,role&user_id=eq.'+S.uid).then(function(a){
-if(!a||!a[0]||!a[0].company_id){S=null;localStorage.removeItem(SK);return login('هذا الحساب غير مربوط بشركة')}
-CID=a[0].company_id;
-if(sessionStorage.getItem(FL)){ready=true;done();out();return}
+if(!a||!a[0]||!a[0].company_id){S=null;localStorage.removeItem(SK);localStorage.removeItem('cg_role');return login('هذا الحساب غير مربوط بشركة')}
+CID=a[0].company_id;var R=String(a[0].role||'').toLowerCase(),role=/both|معا/.test(R)?'both':(/super|oper|مسي|مشغل/.test(R)?'supervisor':'manager');set0.call(localStorage,'cg_role',role);
+if(sessionStorage.getItem(FL)){ready=true;if(window.cgApply)window.cgApply();done();out();return}
 return api('company_data?select=data&company_id=eq.'+CID).then(function(r){
 if(r&&r[0]&&r[0].data&&Object.keys(r[0].data).length){
 set0.call(localStorage,LS,JSON.stringify(r[0].data));sessionStorage.setItem(FL,'1');location.reload()
 }else{
-ready=true;sessionStorage.setItem(FL,'1');push().then(function(){done();out()})
+ready=true;sessionStorage.setItem(FL,'1');push().then(function(){if(window.cgApply)window.cgApply();done();out()})
 }
 })
 }).catch(function(){login('تعذّر الاتصال، تحقق من الإنترنت ثم حاول مجدداً')})
